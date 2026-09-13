@@ -50,6 +50,26 @@ async def _get_student(current_user: CurrentUser, db: AsyncSession) -> Student:
     return student
 
 
+def _update_streak(student: Student) -> bool:
+    now = datetime.now(UTC)
+    today = now.date()
+    if not student.streak_last_date:
+        student.streak_days = 1
+        student.streak_last_date = now
+        return True
+    last_date = student.streak_last_date.date() if hasattr(student.streak_last_date, "date") else student.streak_last_date
+    delta = (today - last_date).days
+    if delta == 1:
+        student.streak_days += 1
+        student.streak_last_date = now
+        return True
+    elif delta > 1:
+        student.streak_days = 1
+        student.streak_last_date = now
+        return True
+    return False
+
+
 # ── Dashboard ───────────────────────────────────────────────────────
 
 @router.get("/dashboard")
@@ -58,6 +78,10 @@ async def get_dashboard(
     db: AsyncSession = Depends(get_db),
 ):
     student = await _get_student(current_user, db)
+    if _update_streak(student):
+        await db.commit()
+        await db.refresh(student)
+
 
     # Recent grades
     grades_result = await db.execute(

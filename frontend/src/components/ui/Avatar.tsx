@@ -5,6 +5,7 @@ export interface AvatarProps {
   src?: string;
   alt?: string;
   initials?: string;
+  name?: string;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   online?: boolean;
   className?: string;
@@ -18,9 +19,10 @@ const sizeClasses = {
   xl: 'w-16 h-16 text-xl',
 };
 
-export const Avatar: React.FC<AvatarProps> = ({ src, alt, initials, size = 'md', online, className }) => {
+export const Avatar: React.FC<AvatarProps> = ({ src, alt, initials, name, size = 'md', online, className }) => {
   const [error, setError] = useState(false);
   const showFallback = !src || error;
+  const displayInitials = initials || (name ? name.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase() : '?');
 
   return (
     <div className={clsx('relative inline-flex flex-shrink-0', className)}>
@@ -30,7 +32,7 @@ export const Avatar: React.FC<AvatarProps> = ({ src, alt, initials, size = 'md',
         showFallback ? 'bg-primary-100 text-primary-700' : 'bg-surface-200'
       )}>
         {showFallback ? (
-          initials ? initials.slice(0, 2).toUpperCase() : '?'
+          displayInitials
         ) : (
           <img
             src={src}

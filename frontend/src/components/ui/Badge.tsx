@@ -3,6 +3,7 @@ import { clsx } from 'clsx';
 
 export interface BadgeProps {
   variant?: 'default' | 'primary' | 'success' | 'warning' | 'danger';
+  size?: 'sm' | 'md' | 'lg';
   dot?: boolean;
   count?: number;
   maxCount?: number;
@@ -10,7 +11,8 @@ export interface BadgeProps {
   className?: string;
 }
 
-export const Badge: React.FC<BadgeProps> = ({ variant = 'default', dot, count, maxCount = 99, children, className }) => {
+export const Badge: React.FC<BadgeProps> = ({ variant = 'default', size = 'md', dot, count, maxCount = 99, children, className }) => {
+
   if (dot) {
     return (
       <span className={clsx(

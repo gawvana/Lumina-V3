@@ -38,5 +38,12 @@ class ApiClient:
         result = await self._request("GET", f"/api/v1/users/{user_id}/notifications")
         return result if result else []
 
+    async def update_user_language(self, user_id: str, language: str) -> Optional[Dict[str, Any]]:
+        return await self._request("PATCH", f"/api/v1/users/{user_id}", json={"language": language})
+
+    async def accept_invite(self, token: str, telegram_id: int, full_name: str) -> Optional[Dict[str, Any]]:
+        return await self._request("POST", f"/api/v1/invites/{token}/accept", json={"telegram_id": telegram_id, "full_name": full_name})
+
     async def close(self):
         await self.client.aclose()
+

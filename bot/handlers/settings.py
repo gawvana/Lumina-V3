@@ -20,11 +20,12 @@ async def settings_handler(message: Message, locale: Dict[str, str], db_user: Di
     await message.answer(locale["settings_title"] + "\n" + locale["welcome"], reply_markup=language_keyboard())
 
 @router.callback_query(F.data.startswith("lang_"))
-async def language_callback(callback: CallbackQuery, locale: Dict[str, str]):
+async def language_callback(callback: CallbackQuery, locale: Dict[str, str], db_user: Dict[str, Any] | None, api_client: Any = None):
     lang = callback.data.split("_")[1]
-    # TODO: Update language in backend API for this user
+    if db_user and api_client:
+        user_id = str(db_user.get("id"))
+        await api_client.update_user_language(user_id, lang)
 
-    # Send confirmation (just using hardcoded here as we don't know which locale dictionary we just switched to yet without reloading)
     msg = "Язык изменен на русский." if lang == "ru" else "Til o'zbek tiliga o'zgartirildi."
     await callback.message.edit_text(msg)
     await callback.answer()

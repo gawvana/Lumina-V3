@@ -87,3 +87,17 @@ async def test_security_role_escalation_prevented(client, student_headers):
     # Student attempts to create an invite or modify role
     response = await client.post("/api/v1/admin/invites", json={"role": "admin", "max_uses": 1}, headers=student_headers)
     assert response.status_code == 403
+
+# 11. User -> arbitrary student_id
+async def test_security_user_cannot_access_arbitrary_student_id(client, student_headers, student_user_b, db_session):
+    st_b = (await db_session.execute(select(Student).where(Student.user_id == student_user_b.id))).scalar_one()
+    response = await client.get("/api/v1/student/vibes", headers=student_headers)
+    assert response.status_code == 200
+    for v in response.json():
+        assert v.get("student_id") != str(st_b.id)
+
+# 12. User -> arbitrary school_id
+async def test_security_user_cannot_access_arbitrary_school_id(client, admin_headers, test_school_b):
+    response = await client.put(f"/api/v1/admin/schools/{test_school_b.id}", json={"name": "Hacked School"}, headers=admin_headers)
+    assert response.status_code in (403, 404)
+

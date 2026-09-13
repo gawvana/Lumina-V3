@@ -16,6 +16,9 @@ build/
 venv/
 .pytest_cache/
 .ruff_cache/
+*.db
+*.sqlite
+
 
 
 # Node
