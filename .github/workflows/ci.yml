@@ -1,0 +1,101 @@
+name: Lumina V3 CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: lumina
+          POSTGRES_PASSWORD: lumina
+          POSTGRES_DB: lumina_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        working-directory: backend
+        run: pip install -e ".[dev]"
+
+      - name: Format check
+        working-directory: backend
+        run: ruff format --check .
+
+      - name: Lint
+        working-directory: backend
+        run: ruff check .
+
+      - name: Type check
+        working-directory: backend
+        run: mypy app/ --ignore-missing-imports
+
+      - name: Run tests
+        working-directory: backend
+        env:
+          DATABASE_URL: postgresql+asyncpg://lumina:lumina@localhost:5432/lumina_test
+          REDIS_URL: redis://localhost:6379/0
+          APP_SECRET_KEY: test-secret-key-for-ci
+          TELEGRAM_BOT_TOKEN: test-bot-token
+        run: python -m pytest -v --cov=app --cov-report=term-missing
+
+      - name: Security tests
+        working-directory: backend
+        env:
+          DATABASE_URL: postgresql+asyncpg://lumina:lumina@localhost:5432/lumina_test
+          REDIS_URL: redis://localhost:6379/0
+          APP_SECRET_KEY: test-secret-key-for-ci
+          TELEGRAM_BOT_TOKEN: test-bot-token
+        run: python -m pytest tests/test_security.py -v
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint || true
+
+      - name: Type check
+        working-directory: frontend
+        run: npm run typecheck
+
+      - name: Run tests
+        working-directory: frontend
+        run: npm run test || true
+
+      - name: Build
+        working-directory: frontend
+        run: npm run build

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lumina-v3-bot"
+version = "0.1.0"
+description = "Telegram Bot for Lumina V3 OS"
+requires-python = ">=3.12"
+dependencies = [
+    "aiogram>=3.14.0",
+    "httpx>=0.28.0",
+    "redis>=5.2.0",
+    "structlog>=24.4.0",
+    "pydantic-settings>=2.5.0",
+    "pydantic>=2.9.0"
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501", "E402", "B008", "F841", "RUF001", "RUF002", "RUF003"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["bot"]
+
