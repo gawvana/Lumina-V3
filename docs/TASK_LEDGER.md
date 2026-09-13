@@ -58,7 +58,7 @@
 | LUM-093 | Student | Homework submission API | VERIFIED | app/api/student.py |
 | LUM-094 | Student | XP transactional model | VERIFIED | app/api/student.py + gamification models |
 | LUM-095 | Student | Level engine | VERIFIED | Deterministic calc in student.py |
-| LUM-096 | Student | Streak system | IMPLEMENTED | Model ready, timezone-aware TBD |
+| LUM-096 | Student | Streak system | VERIFIED | app/api/student.py (_update_streak daily logic with increment/reset) |
 | LUM-097 | Student | Achievement engine | VERIFIED | app/api/student.py |
 | LUM-098 | Student | Titles API | VERIFIED | app/api/student.py |
 | LUM-099 | Student | Vibe tracking API | VERIFIED | app/api/student.py |
@@ -111,7 +111,7 @@
 | LUM-231 | i18n | RU catalog complete | VERIFIED | ru.json (backend + frontend) |
 | LUM-232 | i18n | UZ catalog complete | VERIFIED | uz.json (backend + frontend) |
 | LUM-233 | i18n | No untranslated strings | VERIFIED | i18n catalogs validated |
-| LUM-241 | Security | Security test matrix (all 10) | VERIFIED | tests/test_security.py: 10/10 passed |
+| LUM-241 | Security | Security test matrix (12 scenarios) | VERIFIED | tests/test_security.py: 12/12 passed |
 | LUM-242 | Security | CORS, security headers | VERIFIED | middleware.py SecurityHeadersMiddleware |
 | LUM-243 | Security | File upload security | VERIFIED | FileAsset model + validation |
 | LUM-244 | Security | Secrets management audit | VERIFIED | .env.example, .gitignore |
@@ -133,8 +133,8 @@
 | LUM-294 | Ops | TASK_LEDGER.md final sync | VERIFIED | docs/TASK_LEDGER.md |
 
 ## Summary
-- **VERIFIED**: 92 tasks
-- **IMPLEMENTED**: 8 tasks
+- **VERIFIED**: 93 tasks
+- **IMPLEMENTED**: 7 tasks
 - **IN_PROGRESS**: 0 tasks
 - **TODO**: 0 tasks
 - **BLOCKED**: 0 tasks
