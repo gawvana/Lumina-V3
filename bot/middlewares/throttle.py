@@ -25,11 +25,14 @@ class ThrottleMiddleware(BaseMiddleware):
 
         current_time = time.time()
 
-        last_request = await self.redis.get(key)
-        if last_request and current_time - float(last_request) < self.rate_limit:
-            # Drop the request if it's too fast
-            return None
+        try:
+            last_request = await self.redis.get(key)
+            if last_request and current_time - float(last_request) < self.rate_limit:
+                # Drop the request if it's too fast
+                return None
 
-        await self.redis.set(key, current_time, ex=self.rate_limit * 2)
+            await self.redis.set(key, current_time, ex=self.rate_limit * 2)
+        except Exception:
+            pass
 
         return await handler(event, data)
